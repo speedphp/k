@@ -8,7 +8,7 @@ The k web framework is very simple to use, it based on koa2 and run as fast as k
 
 ## Install
 
-**npm install k**
+**npm install k -g**
 
 ## How to use
 
