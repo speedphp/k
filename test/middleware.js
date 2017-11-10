@@ -1,6 +1,5 @@
 'use strict';
 
-const assert = require('assert');
 const supertest = require('supertest')
 const helper = require('./helper.js')
 const cwd = process.cwd()
