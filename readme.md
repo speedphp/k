@@ -1,7 +1,5 @@
 # new web framework
 
-## Feature 
- 
 **SIMPLE, SPEED, MVC**
 
 The k web framework is very simple to use, it based on koa2 and run as fast as koa2, it bright a agile MVC to you.
