@@ -1,6 +1,6 @@
-'use strict';
-const lodash = require('lodash');
-const assert = require('assert');
+'use strict'
+const lodash = require('lodash')
+const assert = require('assert')
 const supertest = require('supertest')
 const helper = require('./helper.js')
 const cwd = process.cwd()
@@ -36,7 +36,7 @@ describe('Application Base', () => {
                 .get('/index.html')
                 .expect(200)
                 .end((err, res) => {
-                    if (err) return done(err);
+                    if (err) return done(err)
                     assert.equal(res.text, 'hello world!')
                     app.close()
                     done()

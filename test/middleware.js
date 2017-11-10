@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const supertest = require('supertest')
 const helper = require('./helper.js')

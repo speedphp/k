@@ -1,10 +1,10 @@
-'use strict';
+'use strict'
 
-const lodash = require('lodash');
+const lodash = require('lodash')
 const serve = require('koa-static')
 const views = require('koa-views')
-const session = require('koa-session');
-const bodyParser = require('koa-bodyparser');
+const session = require('koa-session')
+const bodyParser = require('koa-bodyparser')
 const router = require('./lib/router.js')
 const configDefault = require('./lib/config.default.js')
 const model = require('./lib/model.js')

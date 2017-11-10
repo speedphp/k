@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 const assert = require('assert')
 const path = require('path')
@@ -44,6 +44,6 @@ describe('Command Test', () => {
     })
 
     after(() => {
-        fs.remove(cwd + '/tmp/');
+        fs.remove(cwd + '/tmp/')
     })
 })

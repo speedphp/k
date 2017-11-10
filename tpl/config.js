@@ -1,4 +1,4 @@
-const lodash = require('lodash');
+const lodash = require('lodash')
 const env = process.env.NODE_ENV || 'development'
 let config = {
     'default': {
