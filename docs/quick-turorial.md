@@ -286,7 +286,7 @@ Let's focus on the ```index()``` of ```main.js```, changed it to:
     }
 ```
 
-In the index() method:
+**In the index() method:**
 
 1. create the guestbook model.
 2. get all the data from the database table, ```let records = await guestbook.findAll()```, by using the findAll(), witch is a function belongs to the model.
@@ -294,7 +294,7 @@ In the index() method:
 4. if the records exists, then for each the ```createtime``` field to change to pretty format.
 5. then render the ```guestbook``` template with records, ```ctx.render('guestbook', {'records': records})```.
 
-Open the ```/home/app/view/guestbook.html```, in line 26, modify:
+**Open the ```/home/app/view/guestbook.html```, in line 26, modify:**
 
 ```
             <div class="col-md-8">
@@ -354,7 +354,166 @@ Name | Meaning
 
 By now, we finish a guestbook simply.
 
-Next section we will do more data job and Ajax.
+## Data CRUD and Ajax
+
+> [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) is the four basic functions of Database.
+> [JQuery](https://zh.wikipedia.org/wiki/JQuery) jQuery's syntax is designed to make it easier to navigate a document, select DOM elements, create animations, handle events, and develop Ajax applications.
+
+### Show the single post
+
+First of all, we should create a new controller file by the scaffold, use ```k c [controllername]```
+
+```
+$ cd ./home
+
+$ k c single
+
+generated: /home/app/controller/single.js
+```
+
+So, add a route rule ```'/single' : 'single/index',``` in ```/home/app/config.js``` :
+
+```
+        'router_map': {
+            '/index.html': 'main/index',
+            '/write' : 'main/write',
+            '/single' : 'single/index',
+            '/': 'main/index',
+        },
+```
+
+and now visit the http://127.0.0.1:3000/single will go to the ```single``` controller.
+
+Open the ```/home/app/controller/single.js```, modify:
+
+```
+class single {
+    async index(ctx){
+        let condition = {"id" : ctx.request.query.upid}
+        let guestbook = ctx.model('guestbook')
+
+        let result = await guestbook.find(condition)
+        console.log(result)
+        console.log(guestbook.dumpSql())
+    }
+}
+module.exports = single
+```
+
+Here we ignore the display, instead to see the data.
+
+1. format the ```condition```, it's ```id``` mapping to   the GET parameter ```ctx.request.query.upid```, that meaning we will find the condition is field ```id``` equal the ```ctx.request.query.upid``` .
+2. ```let guestbook = ctx.model('guestbook')``` get model as above.
+3. next we ```find``` the condition, get a result, which show in the console.log().
+4. re-run ```node index.js``` , and visit http://127.0.0.1:3000/single?upid=1 , the ```upid``` is some value exists in the database table.
+5. ```console.log(guestbook.dumpSql())``` can see the executed SQL which is, very useful function.
+
+now we get a single record in the table, which find by ```id```.
+
+> let's see the ```main/index``` has a ```findAll()```, and now ```single/index``` has a ```find()```, there are some  different.
+
+Addition we modify ```single.js``` hoping to show the data on browser, by json format.
+
+> [json](https://zh.wikipedia.org/wiki/JSON) JavaScript Object Notation. It is a very common data format used for asynchronous browser–server communication, including as a replacement for XML in some AJAX-style systems.
+
+```
+class single {
+    async index(ctx){
+        let condition = {"id" : ctx.request.query.upid}
+        let guestbook = ctx.model('guestbook')
+        let result = await guestbook.find(condition)
+
+        if ( result ){
+            ctx.set('Content-Type', 'application/json')
+            ctx.body = JSON.stringify(result)
+        }else{
+            ctx.throw(404)
+        }
+    }
+}
+module.exports = single
+```
+
+1. when we get the ```result```, check if it had a data, if not throw a ```404 NOT FOUND``` error to browser.
+2. if ```result``` got data, so change the content-type to json, then send json data by ```ctx.body```
+
+now re-run and see on browser:
+
+![json](img/quick-turorial-json.png)
+
+Next, we modify the ```guestbook.html```, on line about 116:
+
+```
+    <div class="modal fade" id="showModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="show_title"></h4>
+                </div>
+                <div class="modal-body">
+                    <p id="show_contents"></p>
+                    <blockquote class="blockquote-reverse small">
+                        <ul class="list-inline text-muted">
+
+                            <li>by</li>
+                            <li id="show_username"></li>
+                            <li id="show_createtime"></li>
+                            <li>
+                                <button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 100</button>
+                            </li>
+                        </ul>
+                    </blockquote>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function showmsg(id){
+            $.getJSON("/single", { 'upid': id }, function(json){
+                $("#show_title").html(json.title);
+                $("#show_contents").html(json.contents);
+                $("#show_username").html(json.username);
+                $("#show_createtime").html(json.createtime);
+                $('#showModal').modal('show');
+            });
+        }
+    </script>
+```
+
+1. modify the positions of fields, for example ```<li id="show_username"></li>``` is to show the ```username``` field.
+2. create a javascript function ```showmsg()```, it can send a request to ```/single``` add upid, then receive the json in callback function.
+3. the callback function ```function(json){}``` can execute in request return, then change the positions.
+
+Also there are a job to do, find and change :
+
+```
+<h4 class="media-heading">{{record.title}}<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
+```
+ to
+
+ ```
+ <h4 class="media-heading"><a href="javascript:void(0);" onclick="showmsg({{record.id}})">{{record.title}}</a><button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button></h4>
+```
+
+1. every title position we added a ```onclick``` event, it can raise the ```showmsg()``` function.
+2. As the same time we bring the id to ```showmsg()``` .
+
+Ok, now re-run and visit, click on every post title, we can see the Ajax data.
+
+### Like ![like](img/quick-turorial-like.png)
 
 
-### TO BE CONTINUE ###
+
+
+
+
+
+
+
+
+
+
