@@ -1,6 +1,6 @@
 {
   "name": "k",
-  "version": "0.9.22",
+  "version": "0.9.23",
   "description": "new web framework",
   "main": "main.js",
   "scripts": {
