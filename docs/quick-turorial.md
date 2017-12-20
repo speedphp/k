@@ -506,6 +506,229 @@ Ok, now re-run and visit, click on every post title, we can see the Ajax data.
 
 ### Like ![like](img/quick-turorial-like.png)
 
+Now we create a LIKE function for the guestbook.
+
+First we modify the database table to store the like number.
+
+Run this SQL, we named the like for 'dig':
+
+```
+ALTER TABLE `guestbook` ADD `dig` INT(11) NULL DEFAULT '0' AFTER `username`;
+```
+
+![table](img/quick-turorial-table.jpg)
+
+Also, we modify the ```/home/app/controller/single.js``` and add a like action.
+
+```
+    async like(ctx){
+        let condition = {"id" : ctx.request.query.upid}
+        let guestbook = ctx.model('guestbook')
+
+        let result = await guestbook.find(condition)
+        if(result){
+            let dig = result["dig"]+1
+            let newrow = {"dig" : dig}
+            await guestbook.update(condition, newrow)
+            ctx.body = dig
+        }else{
+            ctx.throw(404)
+        }
+    }
+```
+
+Let's see it:
+1. format the ```condition```, it's ```id``` mapping to   the GET parameter ```ctx.request.query.upid```, that meaning we will find the condition is field ```id``` equal the ```ctx.request.query.upid``` .
+2. ```let guestbook = ctx.model('guestbook')``` get model as above.
+3. next we ```find``` the condition, get a result, and it's as the same as above.
+
+4. then, we let the dig dig value is add 1.
+5. format ```newrow```, mapping dig to ```dig``` field.
+6. ```guestbook.update```, the update the database.
+7. send dig value to the client
+
+Also, we config the ```/home/app/config.js``` for the like route, map the ```/like``` to ```single/like``` .
+
+```
+        'router_map': {
+            '/index.html': 'main/index',
+            '/write' : 'main/write',
+            '/single' : 'single/index',
+            '/like' : 'single/like',
+            '/': 'main/index',
+        },
+```
+
+so, run the app, and see http://localhost:3000/like?upid=5 it is new like sum.
+
+Modify the ```/home/app/view/guestbook.html```:
+
+1. add a js function ```digmsg()```
+
+```
+    <script>
+        function showmsg(id){
+            ...
+        }
+        function digmsg(id){
+            $.get("/like", {"upid" : id}, function(dig){
+                $("#dig-" + id).html(dig);
+            });
+        }
+    </script>
+```
+
+2. modify the ```like``` position:
+
+from:
+
+```
+<li><button type="button" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> 100</button></li>
+```
+
+to:
+
+```
+<li><button type="button" class="btn btn-default btn-xs"  onclick="digmsg({{record.id}})"><span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> <span id="dig-{{record.id}}">{{record.dig}}</span></button></li>
+```
+
+we add a ```onclick``` and the 'like dig show' .
+
+addtion, we modify the popup window's like:
+
+```
+<span id="show_dig"></span>
+```
+
+and ```showmsg()``` add a ```$("#show_dig").html(json.dig);```
+
+so, run app and see the like.
+
+### Delete the post
+
+Last we introduce the ```delete``` function.
+
+we modify the ```/home/app/controller/single.js``` and add a delete action.
+
+```
+    async del(ctx){
+        let condition = {"id" : ctx.request.query.upid}
+        let guestbook = ctx.model('guestbook')
+        guestbook.delete(condition)
+        ctx.body = "ok"
+    }
+```
+
+1. get ```condition``` and ```guestbook``` the same as above.
+2. call ```guestbook.delete```
+3. send ok to client
+
+Then modify the config ```'/del' : 'single/del',``` :
+
+```
+        'router_map': {
+            '/index.html': 'main/index',
+            '/write' : 'main/write',
+            '/single' : 'single/index',
+            '/like' : 'single/like',
+            '/del' : 'single/del',
+            '/': 'main/index',
+        },
+```
+
+run the app and visit http://localhost:3000/del?upid=1 now the id 1 post is deleted.
+
+Link to the template, modify the del button in ```/home/app/view/guestbook.html```:
+
+![delbutton](img/quick-turorial-delbutton.jpg)
+
+code from:
+```
+<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+```
+```
+<div class="panel panel-default">
+```
+
+to:
+
+```
+<button type="button" class="close" aria-label="Close" onclick="delmsg({{record.id}})"><span aria-hidden="true">&times;</span></button>
+```
+```
+<div class="panel panel-default" id="panel-{{record.id}}">
+```
+
+
+
+add js function ```delmsg()```
+
+```
+function delmsg(id){
+    $.get("/del", {"upid" : id}, function(){
+        $("#panel-" + id).fadeOut();
+    });
+}
+```
+1. we use the $.get() of JQuery.
+2. fadeOut() is a funny function.
+
+ok, run the app, and check the delete.
+
+### Pagination
+
+When we has many posts, and the page would very long, so we can use the Pagination.
+
+First we modify ```index()``` of ```/home/app/controller/main.js```:
+
+```
+    async index(ctx) {
+        let page = (ctx.request.query.p == undefined) ? 1 : ctx.request.query.p
+        let guestbook = ctx.model('guestbook')
+        let records = await guestbook.findAll("", "createtime DESC", "*", [page, 10])
+        moment.locale('zh-cn')
+        if (records) {
+            for (let r in records) {
+                records[r]['createtime'] = moment(records[r]['createtime'], "X").format('MMMM Do h:mm A')
+            }
+        }
+        await ctx.render('guestbook', {'records': records, 'page':guestbook.page})
+    }
+    }
+```
+
+1. let the ```page``` value to 1 or ```ctx.request.query.p```, that is the current page number.
+2. change ```findAll()``` to ```findAll("", "createtime DESC", "*", [page, 10])```, is means find all the posts, sort by createtime DESC, fields get all(*), and page, show every 10 posts in one page.
+3. send the ```guestbook.page``` to template.
+
+Then modify template part of ```<div class="pagination ...>```,to :
+
+```
+                {% if page != undefined %}
+                <nav>
+                    <ul class="pagination pull-right">
+                        <li>
+                            <a href="/?p={{page.prev_page}}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        {% for p in page.all_pages %}
+                        <li {% if p == page.current_page %} class="active"{% endif %}>
+                            <a href="/?p={{p}}">{{p}}</a>
+                        </li>
+                        {% endfor %}
+                        <li>
+                            <a href="/?p={{page.next_page}}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                {% endif %}
+```
+
+ok, the Pagination is show now.
+
 
 
 
