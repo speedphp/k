@@ -357,7 +357,7 @@ By now, we finish a guestbook simply.
 ## Data CRUD and Ajax
 
 > [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) is the four basic functions of Database.
-> [JQuery](https://zh.wikipedia.org/wiki/JQuery) jQuery's syntax is designed to make it easier to navigate a document, select DOM elements, create animations, handle events, and develop Ajax applications.
+> [JQuery](https://zh.wikipedia.org/wiki/JQuery)'s syntax is designed to make it easier to navigate a document, select DOM elements, create animations, handle events, and develop Ajax applications.
 
 ### Show the single post
 
