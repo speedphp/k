@@ -15,6 +15,7 @@
   "bin": {
     "k": "./lib/command.js"
   },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/@zhenzhong" },
   "keywords": ["framework", "koa", "web", "restful", "router", "app", "api", "model", "backend", "middleware",  "es6", "es7", "async", "await", "mysql"],
   "dependencies": {
     "commander": "^2.11.0",
