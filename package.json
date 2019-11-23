@@ -1,21 +1,21 @@
 {
   "name": "k",
-  "version": "0.9.26",
+  "version": "0.9.27",
   "description": "new web framework",
   "main": "main.js",
   "scripts": {
     "test": "mocha"
   },
-  "author": "zhenzhong",
+  "author": "speedphp",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zhenzhong/k.git"
+    "url": "https://github.com/speedphp/k.git"
   },
   "bin": {
     "k": "./lib/command.js"
   },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/@zhenzhong" },
+  "publishConfig": { "registry": "https://npm.pkg.github.com/@speedphp" },
   "keywords": ["framework", "koa", "web", "restful", "router", "app", "api", "model", "backend", "middleware",  "es6", "es7", "async", "await", "mysql"],
   "dependencies": {
     "commander": "^2.11.0",
