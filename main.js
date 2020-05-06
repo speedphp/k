@@ -17,12 +17,13 @@ module.exports = (app, config, base_dir) => {
     app.keys = app.config.appkeys
     app.use(serve(app.config.public_path))
     app.use(bodyParser())
+    app.use(rawBody())
     app.use(session(app.config.session_setting, app))
     app.use(views(app.config.view_path, app.config.view_opts))
     app.use(model(app.config.model_path, app.config.mysql))
     app.use(display)
     app.use(router(app.config.router_map, app.config.controller_path))
-    app.use(rawBody())
+
 
     return app
 }
