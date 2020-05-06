@@ -1,6 +1,6 @@
 {
   "name": "k",
-  "version": "0.9.31",
+  "version": "0.10.32",
   "description": "new web framework",
   "main": "main.js",
   "scripts": {
@@ -15,8 +15,26 @@
   "bin": {
     "k": "./lib/command.js"
   },
-  "publishConfig": { "registry": "https://npm.pkg.github.com/@speedphp" },
-  "keywords": ["framework", "koa", "web", "restful", "router", "app", "api", "model", "backend", "middleware",  "es6", "es7", "async", "await", "mysql"],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@speedphp"
+  },
+  "keywords": [
+    "framework",
+    "koa",
+    "web",
+    "restful",
+    "router",
+    "app",
+    "api",
+    "model",
+    "backend",
+    "middleware",
+    "es6",
+    "es7",
+    "async",
+    "await",
+    "mysql"
+  ],
   "dependencies": {
     "commander": "^2.11.0",
     "http-errors": "^1.6.2",

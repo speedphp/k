@@ -29,18 +29,41 @@ describe('Application Base', () => {
         })
     })
     describe('Run Application Test', () => {
+
         it('Hello world test', done => {
             const app = helper.runDefaultApp(lib_path)
             const request = supertest(app)
-            request
-                .get('/index.html')
-                .expect(200)
-                .end((err, res) => {
-                    if (err) return done(err)
-                    assert.equal(res.text, 'hello world!')
-                    app.close()
-                    done()
-                })
+            helper.copyDefaultController(() => {
+                request
+                    .get('/index.html')
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+                        assert.equal(res.text, 'hello world!')
+                        app.close()
+                        done()
+                    })
+            })
+        })
+
+        it('RawBody received test', done => {
+            const app = helper.runDefaultApp(lib_path)
+            const request = supertest(app)
+            helper.copyEchoBodyController(() => {
+                let send_body = 'I am body'
+                request
+                    .post('/index.html')
+                    .send(send_body)
+                    .expect(200)
+                    .end((err, res) => {
+                        if (err) return done(err)
+                        assert.equal(res.text, send_body)
+                        app.close()
+                        done()
+                    })
+            })
         })
     })
+
+
 })

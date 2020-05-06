@@ -9,6 +9,8 @@ const router = require('./lib/router.js')
 const configDefault = require('./lib/config.default.js')
 const model = require('./lib/model.js')
 const display = require('./lib/display.js')
+const rawBody = require('./lib/rawBody.js')
+
 
 module.exports = (app, config, base_dir) => {
     app.config = lodash.assign(configDefault(base_dir || process.cwd()), config)
@@ -20,5 +22,7 @@ module.exports = (app, config, base_dir) => {
     app.use(model(app.config.model_path, app.config.mysql))
     app.use(display)
     app.use(router(app.config.router_map, app.config.controller_path))
+    app.use(rawBody())
+
     return app
 }
