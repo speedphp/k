@@ -24,7 +24,7 @@ module.exports = (app, config, base_dir) => {
     app.use(display)
     app.use(router(app.config.router_map, app.config.controller_path))
     if(app.config.enable_socket_io){
-        return socket(app.config.handler_path, app)
+        return socket(app.config, app)
     }
 
     return app
