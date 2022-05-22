@@ -8,7 +8,7 @@ The k web framework is very simple to use, it based on koa2 and run as fast as k
 
 **npm install k -g**
 
-## How to use
+## Quick Use
 
 ```
 $ k new appname
@@ -18,15 +18,13 @@ $ node index.js
 
 then your first app world be run at [http://localhost:3000](http://localhost:3000).
 
-## Test
+## NEXT
 
-```
-npm test
-```
+[k Framework Introduction](https://github.com/SpeedPHP/k/blob/master/docs/summary.md)
 
-## TODO
+[Documents for Quick Tutorial Example](https://github.com/SpeedPHP/k/blob/master/docs/quick-turorial.md)
 
-more docs, more test, more example
+[Quick Tutorial Example](https://github.com/SpeedPHP/k/tree/master/examples/quick-turorial)
 
 ## License
 
